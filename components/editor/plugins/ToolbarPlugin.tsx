@@ -10,9 +10,10 @@ import {
   SELECTION_CHANGE_COMMAND,
   CAN_UNDO_COMMAND,
   CAN_REDO_COMMAND,
+  $isTextNode,
 } from "lexical";
 import { $createParagraphNode } from "lexical";
-import { $setBlocksType, $patchStyleText } from "@lexical/selection";
+import { $setBlocksType } from "@lexical/selection";
 import React, { useEffect, useState, useCallback } from "react";
 
 function Divider() {
@@ -36,8 +37,6 @@ export default function ToolbarPlugin() {
     editor.getEditorState().read(() => {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
-        const anchorNode = selection.anchor.getNode();
-
         setIsBold(selection.hasFormat("bold"));
         setIsItalic(selection.hasFormat("italic"));
         setIsUnderline(selection.hasFormat("underline"));
@@ -90,7 +89,7 @@ export default function ToolbarPlugin() {
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
         selection.getNodes().forEach((node) => {
-          if (node.isText()) {
+          if ($isTextNode(node)) {
             node.setStyle(`class`, styleClass);
           }
         });
