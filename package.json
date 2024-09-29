@@ -12,8 +12,9 @@
     "@clerk/nextjs": "^5.6.3",
     "@clerk/themes": "^2.1.33",
     "@floating-ui/react-dom": "^2.1.2",
-    "@lexical/react": "^0.16.1",
+    "@lexical/react": "^0.18.0",
     "@liveblocks/client": "^2.8.0",
+    "@liveblocks/node": "^2.8.0",
     "@liveblocks/react": "^2.8.0",
     "@liveblocks/react-lexical": "^2.8.0",
     "@liveblocks/react-ui": "^2.8.0",
@@ -21,8 +22,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "fs-extra": "^11.2.0",
-    "lexical": "^0.16.1",
+    "lexical": "^0.18.0",
     "lucide-react": "^0.446.0",
+    "nanoid": "^5.0.7",
     "next": "14.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -31,13 +33,13 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18.3.0",
-    "eslint": "^8",
+    "eslint": "^9",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.13",
     "typescript": "^5"
   }
 }
