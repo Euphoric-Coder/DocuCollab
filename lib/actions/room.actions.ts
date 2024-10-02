@@ -1,11 +1,10 @@
 'use server';
 
-import {nanoid} from "nanoid";
-import { liveblocks } from "../liveblocks";
-import { revalidatePath } from "next/cache";
-import { getAccessType, parseStringify } from "../utils";
-import { redirect } from "next/navigation";
-
+import { nanoid } from 'nanoid'
+import { liveblocks } from '../liveblocks';
+import { revalidatePath } from 'next/cache';
+import { getAccessType, parseStringify } from '../utils';
+import { redirect } from 'next/navigation';
 
 export const createDocument = async ({ userId, email }: CreateDocumentParams) => {
   const roomId = nanoid();
@@ -16,7 +15,6 @@ export const createDocument = async ({ userId, email }: CreateDocumentParams) =>
       email,
       title: 'Untitled'
     }
-
     const usersAccesses: RoomAccesses = {
       [email]: ['room:write']
     }
@@ -24,7 +22,7 @@ export const createDocument = async ({ userId, email }: CreateDocumentParams) =>
     const room = await liveblocks.createRoom(roomId, {
       metadata,
       usersAccesses,
-      defaultAccesses: ['room:write']
+      defaultAccesses: []
     });
     
     revalidatePath('/');
@@ -39,11 +37,11 @@ export const getDocument = async ({ roomId, userId }: { roomId: string; userId: 
   try {
       const room = await liveblocks.getRoom(roomId);
     
-      // const hasAccess = Object.keys(room.usersAccesses).includes(userId);
+      const hasAccess = Object.keys(room.usersAccesses).includes(userId);
     
-      // if(!hasAccess) {
-      //   throw new Error('You do not have access to this document');
-      // }
+      if(!hasAccess) {
+        throw new Error('You do not have access to this document');
+      }
     
       return parseStringify(room);
   } catch (error) {
@@ -64,6 +62,16 @@ export const updateDocument = async (roomId: string, title: string) => {
     return parseStringify(updatedRoom);
   } catch (error) {
     console.log(`Error happened while updating a room: ${error}`);
+  }
+}
+
+export const getDocuments = async (email: string ) => {
+  try {
+      const rooms = await liveblocks.getRooms({ userId: email });
+    
+      return parseStringify(rooms);
+  } catch (error) {
+    console.log(`Error happened while getting rooms: ${error}`);
   }
 }
 
@@ -102,13 +110,24 @@ export const updateDocumentAccess = async ({ roomId, email, userType, updatedBy 
   }
 }
 
-export const getDocuments = async (email: string ) => {
+export const removeCollaborator = async ({ roomId, email }: {roomId: string, email: string}) => {
   try {
-      const rooms = await liveblocks.getRooms({ userId: email });
-    
-      return parseStringify(rooms);
+    const room = await liveblocks.getRoom(roomId)
+
+    if(room.metadata.email === email) {
+      throw new Error('You cannot remove yourself from the document');
+    }
+
+    const updatedRoom = await liveblocks.updateRoom(roomId, {
+      usersAccesses: {
+        [email]: null
+      }
+    })
+
+    revalidatePath(`/documents/${roomId}`);
+    return parseStringify(updatedRoom);
   } catch (error) {
-    console.log(`Error happened while getting rooms: ${error}`);
+    console.log(`Error happened while removing a collaborator: ${error}`);
   }
 }
 
